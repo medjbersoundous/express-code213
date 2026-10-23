@@ -4,7 +4,6 @@ import { getStudentByID, getStudents, addStudent,
 from "../controllers/studentController.js";
 import express from "express"
 const studentRoutes = express.Router()
-
 studentRoutes.get("/students", getStudents)
 studentRoutes.get("/students/:id", getStudentByID)
 studentRoutes.post("/students", addStudent)
