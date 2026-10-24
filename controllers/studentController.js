@@ -1,6 +1,16 @@
-import students from "../data/studentData.js";
-function getStudents(req,res){
-    res.status(200).json(students)
+import Student from "../models/studentModel.js";
+async function getStudents(req,res){
+    // res.status(200).json(students)
+    // res.render("talamid", {title:"liste des etudiants", students})
+    try{
+        const students = await Student.find()
+        res.status(200).json(students)
+    }catch(error){
+        res.status(500).json({message:error.message})
+    }
+}
+function formulaireAddStudent(req,res){
+    res.render("addStudent")
 }
 function getStudentByID(req,res){
 
@@ -9,16 +19,22 @@ function getStudentByID(req,res){
     if(!student){
         return res.status(404).json({message:"student not found"})
     }
-    res.status(200).json(student)
+    res.status(200).json(student)  
 }
-function addStudent(req,res){
-    const newStudent={
-        id:students.length+1,
-        name:req.body.name,
-        age:req.body.age
+async function addStudent(req,res){
+    try {
+        const newStudent = await Student.create({
+            name:req.body.name,
+            age:req.body.age
+        })
+        res.status(201).json(newStudent)
+    } catch (error) {
+        res.status(400).json({message:error.message})
+        
     }
-    students.push(newStudent)
-    res.status(201).json(newStudent)
+
+    // res.status(201).json(newStudent)
+    // res.redirect("/students")
 }
 function updateStudent(req,res){
     const id = Number(req.params.id)
@@ -59,4 +75,4 @@ function deleteStudent(req, res) {
     res.json(students)
 }
 
-export{getStudentByID, getStudents, addStudent, deleteStudent, updateStudent, updateStudentByPatch}
+export{getStudentByID, getStudents, addStudent, deleteStudent, updateStudent, updateStudentByPatch, formulaireAddStudent}
