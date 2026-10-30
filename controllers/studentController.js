@@ -12,14 +12,18 @@ async function getStudents(req,res){
 function formulaireAddStudent(req,res){
     res.render("addStudent")
 }
-function getStudentByID(req,res){
-
-    const id = Number(req.params.id)
-    const student = students.find(s=>s.id ===id)
+async function getStudentByID(req,res){
+    try {
+        // const id = Number(req.params.id)
+    const student = await Student.findById(req.params.id)
     if(!student){
         return res.status(404).json({message:"student not found"})
     }
     res.status(200).json(student)  
+    } catch (error) {
+        res.status(500).json({message:error.message})
+        
+    }    
 }
 async function addStudent(req,res){
     try {
@@ -36,43 +40,52 @@ async function addStudent(req,res){
     // res.status(201).json(newStudent)
     // res.redirect("/students")
 }
-function updateStudent(req,res){
-    const id = Number(req.params.id)
-    const student =students.find(s=>s.id===id)
-    if(!student){
+async function updateStudent(req,res){
+    // const id = Number(req.params.id)
+    // const student =students.find(s=>s.id===id)
+    try {
+        const student = await Student.findByIdAndUpdate(req.params.id, 
+        {name:req.body.name, age:req.body.age}, {new:true})
+      if(!student){
         return res.status(404).json({message:"student not found"})
+      }
+      res.status(200).json(student)
+    } catch (error) {
+        
+    res.status(500).json({message:error.message})
     }
-    student.name=req.body.name
-    student.age=req.body.age
-    res.status(200).json(student)
 }
-function updateStudentByPatch(req,res){
-     const id = Number(req.params.id)
-    const student =students.find(s=>s.id===id)
-    if(!student){
+async function updateStudentByPatch(req,res){
+    const updates={}
+    if(req.body.name!==undefined) updates.name=req.body.name //updates={name:"...."}
+    if(req.body.age!==undefined) updates.age=req.body.age
+    try {
+        const student = await Student.findByIdAndUpdate(req.params.id, 
+            updates, {new:true})
+        if(!student){
         return res.status(404).json({message:"student not found"})
+      }
+      res.status(200).json(student)
+    } catch (error) {
+        
+    res.status(500).json({message:error.message})
     }
-    if(req.body.name!==undefined){
-         student.name=req.body.name
-    }
-    if(req.body.age!==undefined){
-         student.age=req.body.age
-    }
-    res.status(200).json(student)
-
 }
 
-function deleteStudent(req, res) {
-    const id = Number(req.params.id);
-    const student = students.find(s => s.id === id);
-    if (!student) {
+async function deleteStudent(req, res) {
+    // const id = Number(req.params.id);
+    try {
+        const student = await Student.findByIdAndDelete(req.params.id)
+        if (!student) {
         return res.status(404).json({
             message: "Student not found"
         });
+        }
+        res.status(200).json({message:"deleted succesfully"})
+    } catch (error) {
+        res.status(400).json({message:error.message})
     }
-    const index = students.indexOf(student)
-    students.splice(index, 1)
-    res.json(students)
+
 }
 
 export{getStudentByID, getStudents, addStudent, deleteStudent, updateStudent, updateStudentByPatch, formulaireAddStudent}
