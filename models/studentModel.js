@@ -15,8 +15,23 @@ const studentSchema= new mongoose.Schema(
         image:{
             type:String,
             default:null
+        },
+        courses: {
+            type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Course"
+            }],
+            required: true,
+            default: undefined,
+            // courses:[]
+            validate: {
+                validator: value => value.length > 0,
+                message: "A student must have at least one course"
+            }
         }
-    },{timestamps:true}
+    },
+    {timestamps:true} // createAt:
+    //updateAt 
 )
-const Student = mongoose.model("Student", studentSchema)
+const Student = mongoose.model("Student", studentSchema) //students
 export default Student

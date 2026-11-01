@@ -29,7 +29,8 @@ async function addStudent(req,res){
     try {
         const newStudent = await Student.create({
             name:req.body.name,
-            age:req.body.age
+            age:req.body.age,
+            courses:req.body.courses
         })
         res.status(201).json(newStudent)
     } catch (error) {
