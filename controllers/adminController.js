@@ -1,4 +1,4 @@
-import Admin from "../models/adminModel";
+import Admin from "../models/adminModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 async function addAdmin(req,res){
@@ -56,4 +56,19 @@ async function login(req,res){
         
     }
 }
-export {addAdmin, login}
+async function getAdmin(req, res) {
+    try {
+        const admin = req.user;
+
+        return res.status(200).json({
+            message: "Admin information",
+            admin
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+}
+export {addAdmin, login, getAdmin}
